@@ -34,6 +34,7 @@ class ViewController: NSViewController, MIDIManagerDelegate {
     var coloredLayer = CALayer()
     var KeyLayer_w = CAShapeLayer()
     var KeyLayer_b = CAShapeLayer()
+    var startLayer = CAShapeLayer()
     
     var count_all = UInt()
     var count_collect = UInt()
@@ -52,6 +53,7 @@ class ViewController: NSViewController, MIDIManagerDelegate {
         captureSession.startRunning()
         
         canvasView.layer = CALayer()
+        kyaritan()
         //white_key()
         //black_key()
         playnote(note: play_no)
@@ -64,6 +66,21 @@ class ViewController: NSViewController, MIDIManagerDelegate {
     }
         
     }
+    
+    func kyaritan() {
+        let kyaripath = CGMutablePath()
+        let Y = 460
+        let W = 70
+        let H = 150
+        kyaripath.addRect( CGRect(x: 0, y: 610, width: 1400, height: 10))
+        kyaripath.addRect( CGRect(x: 98, y: 0, width: 10, height: 800))
+        //let KeyLayer_b = CAShapeLayer()
+        startLayer.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
+        startLayer.path = kyaripath
+        startLayer.fillColor = CGColor(red: 0.9, green: 0, blue: 0.9, alpha: 0.6)
+        camera.layer?.addSublayer(startLayer)
+    }
+    
     func frameBlack(playNum : Int){
         
         if playNum < 40 {
@@ -206,11 +223,6 @@ class ViewController: NSViewController, MIDIManagerDelegate {
           }
       }
     
-    override var representedObject: Any? {
-        didSet {
-            // Update the view, if already loaded.
-        }
-    }
 }
 
 //図形の描画
