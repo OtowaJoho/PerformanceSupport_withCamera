@@ -28,6 +28,7 @@ class ViewController: NSViewController, MIDIManagerDelegate {
     
     var on_num = UInt8()
     var play_no = UInt()
+    var Num = Int()
     
     var playLayer = CALayer()
     var coloredLayer = CALayer()
@@ -37,8 +38,11 @@ class ViewController: NSViewController, MIDIManagerDelegate {
     var count_all = UInt()
     var count_collect = UInt()
     
+    var X = Int()
+    var Y = Int()
     
-    
+    var Width = Int()
+    var Height = Int()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -47,18 +51,11 @@ class ViewController: NSViewController, MIDIManagerDelegate {
         setupPreviewLayer()
         captureSession.startRunning()
         
-       // canvasView.layer = CALayer()
-        white_key()
-        black_key()
+        canvasView.layer = CALayer()
+        //white_key()
+        //black_key()
         playnote(note: play_no)
         score()
-        
-      //  let sourcepath = "/Users/otowajoho/Desktop/鍵盤サンプル.png"
-        //let sourcepath = "/Users/otowajoho/Desktop/鍵盤サンプル.png"
-        
-       // let image = NSImage(contentsOfFile: sourcepath)
-      // imageView.frame = CGRect(x: 0, y: 10, width: 1440, height: 900)
-      //  imageView.image = NSImage(named: "鍵盤サンプル")
         
         midi = MIDIManager()
         if 0 < midi!.numberOfSources {
@@ -67,102 +64,79 @@ class ViewController: NSViewController, MIDIManagerDelegate {
     }
         
     }
+    func frameBlack(playNum : Int){
+        
+        if playNum < 40 {
+            X = Num * 55 + 95
+            print(X)
+        }else if playNum < 47 {
+            X = Num * 55 + 150
+        } else if playNum < 52 {
+            X = Num * 55 + 205
+        } else {
+            X = Num * 55 + 260
+        }
+        Width = 70
+        Height = 150
+        Y = 460
+        print(Num,play_no,X,Y,Width,Height)
+    }
+    func frameWhite(playNum : Int) {
+        if playNum < 41 {
+            X = Num * 54 + 108
+        } else if playNum < 48 {
+            X = Num * 54 + 108 + 54
+        } else if playNum < 53 {
+            X = Num * 54 + 108 + 108
+        } else{
+            X = Num * 54 + 108 + 162
+        }
+        Width = 50
+        Height = 560
+        Y = 50
+    }
     
     func playnote(note: UInt) {
-        play_no = UInt.random(in: 36..<56)
-        score()
-        //play_no = 38
-        print(play_no)
+        play_no = UInt.random(in: 36..<56) //演奏提示の鍵盤をランダムで選択
+        print("playno\(play_no)")
+       // play_no = UInt(37) //テスト用
+        score() //スコア表示の関数
         playLayer = createLayer()
-        
-        var X = UInt(100)
-        var Y = 300
-        let Num = UInt(play_no - 36)
-        var Width = UInt(50)
-        var Height = UInt(565)
+        Num = Int(play_no - 36)
         
         //黒鍵
         if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 {
-            if play_no < 40 {
-                X = Num * 55 + 95
-                print(X)
-            }else if play_no < 47 {
-                X = Num * 55 + 150
-            } else if play_no < 52 {
-                X = Num * 55 + 205
-            } else {
-                X = Num * 55 + 260
-            }
-            Width = 70
-            Height = 150
-            Y = 460
-//            white_key()
-//            black_key()
-            playLayer.frame = CGRect(x: Int(X), y: Y, width: Int(Width), height: Int(Height))
-            playLayer.backgroundColor = CGColor(red: 255, green: 0, blue: 0, alpha: 0.8)
-            canvasView.layer?.addSublayer(playLayer)
-            
+            frameBlack(playNum: Int(play_no))
         } else{
         //白鍵
-            if play_no < 41 {
-                X = Num * 54 + 108
-            } else if play_no < 48 {
-                X = Num * 54 + 108 + 54
-            } else if play_no < 53 {
-                X = Num * 54 + 108 + 108
-            } else{
-                X = Num * 54 + 108 + 162
-            }
-            Width = 50
-            Height = 560
-            Y = 50
-            
-            playLayer.frame = CGRect(x: Int(X), y: Y, width: Int(Width), height: Int(Height))
-            playLayer.backgroundColor = CGColor(red: 255, green: 0, blue: 0, alpha: 0.8)
-            canvasView.layer?.insertSublayer(playLayer, at: 1)
-            //black_key()
-            //canvasView.layer?.addSublayer(playLayer)
-        }
+            frameWhite(playNum: Int(play_no))
 
-        
+        }
+        playLayer.frame = CGRect(x: Int(X), y: Y, width: Int(Width), height: Int(Height))
+        playLayer.borderWidth = 8
+        playLayer.borderColor = CGColor(red: 1, green: 0.2, blue: 0.2, alpha: 1)
+        canvasView.layer?.addSublayer(playLayer)
         
     }
     
     func noteOn(ch: UInt8, note: UInt8, vel: UInt8, t: UInt8) {
         on_num = note
         count_all = count_all + 1
-        //canvasView.layer = CALayer()
-       // let layerSize = CGSize(width: 0, height: 0)
         coloredLayer = createLayer()
-        var  X = UInt(100)
-        var Y = 300
-        let Num = UInt(note - 36)
-        var Width = UInt(120)
-        var Height = UInt(200)
         
         if on_num == play_no{
             playnote(note: play_no)
             count_collect = count_collect + 1
+            print("onNum:\(Num)")
         }
-        
+        Num = Int(note - 36)
         //黒鍵
         if note%12 == 1 || note%12 == 3 || note%12 == 6 || note%12 == 8 || note%12 == 10 {
-            if note < 40 {
-                X = Num * 55 + 95
-                print(X)
-            }else if note < 47 {
-                X = Num * 55 + 150
-            } else if note < 52 {
-                X = Num * 55 + 205
-            } else {
-                X = Num * 55 + 260
-            }
-            Width = 70
-            Height = 150
-            Y = 460
+            frameBlack(playNum: Int(note))
             coloredLayer.frame = CGRect(x: Int(X), y: Y, width: Int(Width), height: Int(Height))
+            canvasView.layer?.addSublayer(coloredLayer)
             
-            if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 {
+            if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 { //黒鍵を弾かせたいとき
                 white_key()
                 black_key()
                 canvasView.layer?.addSublayer(playLayer)
@@ -176,18 +150,7 @@ class ViewController: NSViewController, MIDIManagerDelegate {
             
         } else{
         //白鍵
-            if note < 41 {
-                X = Num * 54 + 108
-            } else if note < 48 {
-                X = Num * 54 + 108 + 54
-            } else if note < 53 {
-                X = Num * 54 + 108 + 108
-            } else{
-                X = Num * 54 + 162 + 108
-            }
-            Width = 50
-            Height = 560
-            Y = 50
+            frameWhite(playNum: Int(note))
             coloredLayer.frame = CGRect(x: Int(X), y: Y, width: Int(Width), height: Int(Height))
             
             if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 {
@@ -208,40 +171,40 @@ class ViewController: NSViewController, MIDIManagerDelegate {
     }
     
     func noteOff(ch: UInt8, note: UInt8, vel: UInt8, t: UInt8) {
-        score()
-        if note == on_num {
-            //黒鍵
-            if note%12 == 1 || note%12 == 3 || note%12 == 6 || note%12 == 8 || note%12 == 10 {
-                
-                if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 {
-                    white_key()
-                    canvasView.layer?.addSublayer(coloredLayer)
-                    black_key()
-                    canvasView.layer?.addSublayer(playLayer)
-                } else {
-                    white_key()
-                    canvasView.layer?.addSublayer(coloredLayer)
-                    canvasView.layer?.addSublayer(playLayer)
-                    black_key()
-                }
-            } else{
-                
-                //白鍵
-                if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 {
-                    canvasView.layer?.addSublayer(coloredLayer)
-                    white_key()
-                    black_key()
-                    canvasView.layer?.addSublayer(playLayer)
-                } else {
-                    canvasView.layer?.addSublayer(coloredLayer)
-                    white_key()
-                    canvasView.layer?.addSublayer(playLayer)
-                    black_key()
-                }
-            }
-            score()
-        }
-    }
+          score()
+          if note == on_num {
+              //黒鍵
+              if note%12 == 1 || note%12 == 3 || note%12 == 6 || note%12 == 8 || note%12 == 10 {
+                  
+                  if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 {
+                      white_key()
+                      //canvasView.layer?.addSublayer(coloredLayer)
+                      black_key()
+                      canvasView.layer?.addSublayer(playLayer)
+                  } else {
+                      white_key()
+                     /// canvasView.layer?.addSublayer(coloredLayer)
+                      canvasView.layer?.addSublayer(playLayer)
+                      black_key()
+                  }
+              } else{
+                  
+                  //白鍵
+                  if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 {
+                      canvasView.layer?.addSublayer(coloredLayer)
+                      white_key()
+                      black_key()
+                      canvasView.layer?.addSublayer(playLayer)
+                  } else {
+                      canvasView.layer?.addSublayer(coloredLayer)
+                      white_key()
+                      canvasView.layer?.addSublayer(playLayer)
+                      black_key()
+                  }
+              }
+              score()
+          }
+      }
     
     override var representedObject: Any? {
         didSet {
@@ -255,7 +218,8 @@ extension ViewController{
     
     func createLayer() -> CALayer {
         let newLayer = CALayer()
-        newLayer.backgroundColor = CGColor(red: 0, green: 255, blue: 255, alpha: 0.8)
+        newLayer.borderWidth = 8
+        newLayer.borderColor = CGColor(red: 0, green: 1, blue: 1, alpha: 0.8)
         newLayer.anchorPoint = CGPoint(x: 0, y: 0)
         return newLayer
     }
@@ -270,7 +234,7 @@ extension ViewController{
         //let KeyLayer_w = CAShapeLayer()
         KeyLayer_w.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
         KeyLayer_w.path = keypath_w
-        //KeyLayer_w.strokeColor = CGColor(red: 0, green: 0, blue: 0, alpha: 0.6)
+        KeyLayer_w.strokeColor = CGColor(red: 255, green: 255, blue: 255, alpha: 0)
         KeyLayer_w.fillColor = CGColor(red: 255, green: 255, blue: 255, alpha: 0)
         canvasView.layer?.addSublayer(KeyLayer_w)
        
@@ -364,7 +328,6 @@ extension ViewController{
                     //previewLayer?.frame = CGRect(x: 0, y: 0, width: 1000, height: 900)
                     // Add previewLayer into custom view
                     self.camera.layer?.addSublayer(previewLayer!)
-                    //view.layer?.addSublayer(previewLayer!)
 
                 } catch {
                     print(AVCaptureSessionErrorKey.description)
