@@ -1,18 +1,18 @@
 # Uncomment the next line to define a global platform for your project
 # platform :ios, '9.0'
 
-target 'AccessCamera' do
+target 'System1206_camera' do
   # Comment the next line if you don't want to use dynamic frameworks
   use_frameworks!
 
-  # Pods for AccessCamera
+  # Pods for System1206_camera
 
-  target 'AccessCameraTests' do
+  target 'System1206_cameraTests' do
     inherit! :search_paths
     # Pods for testing
   end
 
-  target 'AccessCameraUITests' do
+  target 'System1206_cameraUITests' do
     # Pods for testing
   end
 

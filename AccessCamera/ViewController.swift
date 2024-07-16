@@ -10,15 +10,18 @@ import Cocoa
 import AVFoundation
 import SwiftUI
 import Vision
+import opencv2
+import AppKit
 
 let sampler = MIDIManager()
 
-class ViewController: NSViewController, MIDIManagerDelegate {
+class ViewController: NSViewController, MIDIManagerDelegate{
     
     @IBOutlet weak var camera: NSView!
     @IBOutlet weak var canvasView: NSView!
     @IBOutlet weak var keyView: NSView!
-    @IBOutlet weak var imageView: NSImageView!
+    //@IBOutlet weak var imageView: NSImageView!
+    
     private var midi: MIDIManager?
     
     var captureSession = AVCaptureSession()
@@ -45,34 +48,32 @@ class ViewController: NSViewController, MIDIManagerDelegate {
     var Width = Int()
     var Height = Int()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupCaptureSession()
-        setupDevice()
-        setupPreviewLayer()
-        captureSession.startRunning()
-        
+        CameraManager.shared.startSession(delegate: self)
         canvasView.layer = CALayer()
-        kyaritan()
+        //kyaritan()
         //white_key()
         //black_key()
-        playnote(note: play_no)
-        score()
+        //        playnote(note: play_no)
+        //        score()
         
         midi = MIDIManager()
         if 0 < midi!.numberOfSources {
             midi!.connectMIDIClient(0)
             midi!.delegate = self
+        }
     }
-        
+    override var representedObject: Any? {
+        didSet {}
     }
+    
+    
     
     func kyaritan() {
         let kyaripath = CGMutablePath()
-        let Y = 460
-        let W = 70
-        let H = 150
-        kyaripath.addRect( CGRect(x: 0, y: 610, width: 1400, height: 10))
+        kyaripath.addRect( CGRect(x: 0, y: 610, width: 1500, height: 10))
         kyaripath.addRect( CGRect(x: 98, y: 0, width: 10, height: 800))
         //let KeyLayer_b = CAShapeLayer()
         startLayer.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
@@ -113,10 +114,12 @@ class ViewController: NSViewController, MIDIManagerDelegate {
         Y = 50
     }
     
+    
+    
     func playnote(note: UInt) {
         play_no = UInt.random(in: 36..<56) //演奏提示の鍵盤をランダムで選択
         print("playno\(play_no)")
-       // play_no = UInt(37) //テスト用
+        // play_no = UInt(37) //テスト用
         score() //スコア表示の関数
         playLayer = createLayer()
         Num = Int(play_no - 36)
@@ -125,9 +128,9 @@ class ViewController: NSViewController, MIDIManagerDelegate {
         if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 {
             frameBlack(playNum: Int(play_no))
         } else{
-        //白鍵
+            //白鍵
             frameWhite(playNum: Int(play_no))
-
+            
         }
         playLayer.frame = CGRect(x: Int(X), y: Y, width: Int(Width), height: Int(Height))
         playLayer.borderWidth = 8
@@ -166,7 +169,7 @@ class ViewController: NSViewController, MIDIManagerDelegate {
             }
             
         } else{
-        //白鍵
+            //白鍵
             frameWhite(playNum: Int(note))
             coloredLayer.frame = CGRect(x: Int(X), y: Y, width: Int(Width), height: Int(Height))
             
@@ -188,40 +191,40 @@ class ViewController: NSViewController, MIDIManagerDelegate {
     }
     
     func noteOff(ch: UInt8, note: UInt8, vel: UInt8, t: UInt8) {
-          score()
-          if note == on_num {
-              //黒鍵
-              if note%12 == 1 || note%12 == 3 || note%12 == 6 || note%12 == 8 || note%12 == 10 {
-                  
-                  if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 {
-                      white_key()
-                      //canvasView.layer?.addSublayer(coloredLayer)
-                      black_key()
-                      canvasView.layer?.addSublayer(playLayer)
-                  } else {
-                      white_key()
-                     /// canvasView.layer?.addSublayer(coloredLayer)
-                      canvasView.layer?.addSublayer(playLayer)
-                      black_key()
-                  }
-              } else{
-                  
-                  //白鍵
-                  if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 {
-                      canvasView.layer?.addSublayer(coloredLayer)
-                      white_key()
-                      black_key()
-                      canvasView.layer?.addSublayer(playLayer)
-                  } else {
-                      canvasView.layer?.addSublayer(coloredLayer)
-                      white_key()
-                      canvasView.layer?.addSublayer(playLayer)
-                      black_key()
-                  }
-              }
-              score()
-          }
-      }
+        score()
+        if note == on_num {
+            //黒鍵
+            if note%12 == 1 || note%12 == 3 || note%12 == 6 || note%12 == 8 || note%12 == 10 {
+                
+                if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 {
+                    white_key()
+                    //canvasView.layer?.addSublayer(coloredLayer)
+                    black_key()
+                    canvasView.layer?.addSublayer(playLayer)
+                } else {
+                    white_key()
+                    /// canvasView.layer?.addSublayer(coloredLayer)
+                    canvasView.layer?.addSublayer(playLayer)
+                    black_key()
+                }
+            } else{
+                
+                //白鍵
+                if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 {
+                    canvasView.layer?.addSublayer(coloredLayer)
+                    white_key()
+                    black_key()
+                    canvasView.layer?.addSublayer(playLayer)
+                } else {
+                    canvasView.layer?.addSublayer(coloredLayer)
+                    white_key()
+                    canvasView.layer?.addSublayer(playLayer)
+                    black_key()
+                }
+            }
+            score()
+        }
+    }
     
 }
 
@@ -249,11 +252,11 @@ extension ViewController{
         KeyLayer_w.strokeColor = CGColor(red: 255, green: 255, blue: 255, alpha: 0)
         KeyLayer_w.fillColor = CGColor(red: 255, green: 255, blue: 255, alpha: 0)
         canvasView.layer?.addSublayer(KeyLayer_w)
-       
+        
     }
     
     func black_key() {
-       // canvasView.layer = CALayer()
+        // canvasView.layer = CALayer()
         let keypath_b = CGMutablePath()
         let Y = 460
         let W = 70
@@ -282,70 +285,125 @@ extension ViewController{
         textLayer.fontSize = 30.0
         // 次の行は、ないと非Retina状態でレンダリングされる by Takabosoftさん
         //textLayer.contentsScale = CGScreen.mainScreen().scale
-       canvasView.layer?.addSublayer(textLayer)
+        canvasView.layer?.addSublayer(textLayer)
     }
     
 }
 
+
+
+class CameraManager:NSObject, AVCaptureVideoDataOutputSampleBufferDelegate{
+    private let targetDeviceName = "FaceTime HDカメラ"
     
-// カメラ映像の描画
-    extension ViewController{
+    private let captureSession = AVCaptureSession()
+    private var captureDevice : AVCaptureDevice!
+    private var videoOutput = AVCaptureVideoDataOutput()
+    
+    
+    func startSession(delegate:AVCaptureVideoDataOutputSampleBufferDelegate){
         
-        func setupCaptureSession() {
-            camera.layer = CALayer()
-            //rect.layer = CALayer()
-            captureSession.sessionPreset = AVCaptureSession.Preset.qHD960x540
-        }
-        
-        func setupDevice(){
-            let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera, .externalUnknown], mediaType: .video, position: .unspecified)
-            let captureSession = AVCaptureSession()
+        let discoverySession = AVCaptureDevice.DiscoverySession(deviceTypes: [.builtInWideAngleCamera, .externalUnknown], mediaType: .video, position: .unspecified)
+        //接続されたデバイスの確認
+        for device in discoverySession.devices {
+            print(device.localizedName)
+            let videoInput = try! AVCaptureDeviceInput(device: device)
+            let available: String = captureSession.canAddInput(videoInput) ? "true": "false"
             
-            //接続されたデバイスの確認
-                for device in discoverySession.devices {
-                    print(device.localizedName)
-                    let videoInput = try! AVCaptureDeviceInput(device: device)
-                    let available: String = captureSession.canAddInput(videoInput) ? "true": "false"
+            print("\tConnected: \(device.isConnected)")
+            print("\tSuspended: \(device.isSuspended)")
+            print("\tAvailable: \(available)")
+            print("\tIs In Use: \(device.isInUseByAnotherApplication)")
+            print()
+        }
         
-                    print("\tConnected: \(device.isConnected)")
-                    print("\tSuspended: \(device.isSuspended)")
-                    print("\tAvailable: \(available)")
-                    print("\tIs In Use: \(device.isInUseByAnotherApplication)")
-                    print()
-                }
+        let devices = discoverySession.devices
+        for device in devices {
+            print(device)
+            //FaceTime HDカメラ
+            //Brio 500
+            if device.localizedName == "FaceTime HDカメラ" {
+                captureDevice = device
+            }
             
-            let devices = discoverySession.devices
-            for device in devices {
-                print(device)
-                if device.localizedName == "Brio 500" {
-                    captureDevice = device
-                }
-                
-                // Camera object found and assign it to captureDevice
-            }
-            currentDevice = captureDevice
+            // Camera object found and assign it to captureDevice
         }
         
-        func setupPreviewLayer() {
-            if captureDevice != nil {
-
-                do {
-
-                    try captureSession.addInput(AVCaptureDeviceInput(device: currentDevice!))
-                    
-                    previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
-                    previewLayer?.transform = CATransform3DMakeRotation(Double.pi / 180 * 180, 0, 0, 1)
-                    previewLayer?.frame = CGRect(x: 0, y: 0, width: 1440, height: 900)
-                    previewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
-                    //previewLayer?.frame = CGRect(x: 0, y: 0, width: 1000, height: 900)
-                    // Add previewLayer into custom view
-                    self.camera.layer?.addSublayer(previewLayer!)
-
-                } catch {
-                    print(AVCaptureSessionErrorKey.description)
-                }
-            }
-        }
+        captureSession.beginConfiguration()
+        let videoInput = try? AVCaptureDeviceInput.init(device: captureDevice)
+        captureSession.sessionPreset = AVCaptureSession.Preset.qHD960x540
+        captureSession.addInput(videoInput!)
+        captureSession.addOutput(videoOutput)
+        captureSession.commitConfiguration()
+        //フレームレート
+        captureDevice.activeVideoMinFrameDuration = CMTimeMake(value: 1, timescale: 60)
+        captureSession.startRunning()
+        
+        //画像バッファ取得のための設定
+        let queue:DispatchQueue = DispatchQueue(label: "videoOutput", attributes: .concurrent)
+        videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as AnyHashable as! String : Int(kCMPixelFormat_32BGRA)]
+        videoOutput.setSampleBufferDelegate(delegate, queue: queue)
+        videoOutput.alwaysDiscardsLateVideoFrames = true
+        
         
     }
+    
+}
+
+extension CameraManager {
+    class var shared : CameraManager {
+        struct Static { static let instance : CameraManager = CameraManager()}
+        return Static.instance
+    }
+}
+
+extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
+    
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection){
+        DispatchQueue.main.sync(execute: {
+            
+            let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer)!
+            CVPixelBufferLockBaseAddress(imageBuffer, CVPixelBufferLockFlags(rawValue: 0))
+            let base = CVPixelBufferGetBaseAddressOfPlane(imageBuffer,0)!
+            let bytesPerRow = UInt(CVPixelBufferGetBytesPerRow(imageBuffer))
+            let width = UInt(CVPixelBufferGetWidth(imageBuffer))
+            let height = UInt(CVPixelBufferGetHeight(imageBuffer))
+            
+            let colorSpace = CGColorSpaceCreateDeviceRGB()
+            let bitsPerCompornent = 8
+            let bitmapInfo = CGBitmapInfo(rawValue: (CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue) as UInt32)
+            let newContext = CGContext(data: base, width: Int(width), height: Int(height), bitsPerComponent: Int(bitsPerCompornent), bytesPerRow: Int(bytesPerRow), space: colorSpace, bitmapInfo: bitmapInfo.rawValue)! as CGContext
+            
+            CVPixelBufferUnlockBaseAddress(imageBuffer, CVPixelBufferLockFlags(rawValue: 0))
+            
+            let imageRef = newContext.makeImage()!
+            let image = NSImage(cgImage: imageRef, size: NSSize(width:Int(width),height: Int(height)))
+            
+            //NSImage -> Mat に変換
+            let srcMat = Mat(nsImage: image)
+            let mtx = Mat(rows: 3, cols: 3, type: CvType.CV_64F)
+            try! mtx.put(row: 0, col: 0, data: [1.92380473e+03, 0, 1.43588428e+03] as [Float64])
+            try! mtx.put(row: 1, col: 0, data: [0, 1.92926580e+03, 9.02045464e+02] as [Float64])
+            try! mtx.put(row: 2, col: 0, data: [0, 0, 1] as [Float64])
+            //print("mat: \(mtx.dump())")
+            
+            let dist =  Mat(rows:3, cols: 3, type: CvType.CV_64F)
+            try! dist.put(row: 0, col: 0, data: [0.17418398, -0.58908136, -0.00068051, 0.00181742, 0.636665  ])
+            
+            let distCoeffs = Mat()
+            
+            let newcameramtx = Mat(rows:3, cols:3, type: CvType.CV_64F)
+            try! newcameramtx.put(row: 0, col: 0, data: [1.96640717e+03, 0, 1.44133019e+03])
+            try! newcameramtx.put(row: 1, col: 0, data: [0, 1.95778770e+03, 9.01038419e+02])
+            try! newcameramtx.put(row: 2, col: 0, data: [0, 0, 1] as [Float64])
+            
+            Calib3d.undistort(src: srcMat, dst: mtx, cameraMatrix: dist, distCoeffs: distCoeffs, newCameraMatrix: newcameramtx)
+            let img = srcMat.toNSImage()
+            let subLayer = CALayer()
+            subLayer.frame = CGRect(x: 0, y: 0, width: Int(width), height: Int(height))
+            subLayer.contents = image
+            camera.layer?.addSublayer(subLayer)
+            
+        })
+    }
+}
 
