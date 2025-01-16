@@ -683,19 +683,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="1440" height="900"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
+                            <customView autoresizesSubviews="NO" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="u06-JR-vs1">
+                                <rect key="frame" x="0.0" y="0.0" width="1440" height="900"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES"/>
+                            </customView>
                             <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="uzT-mT-a7Q">
                                 <rect key="frame" x="0.0" y="0.0" width="1440" height="900"/>
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </customView>
-                            <customView autoresizesSubviews="NO" wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="u06-JR-vs1">
+                            <customView wantsLayer="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fve-hv-ZRn">
                                 <rect key="frame" x="0.0" y="0.0" width="1440" height="900"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxX="YES" heightSizable="YES"/>
-                                <subviews>
-                                    <customView fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fve-hv-ZRn">
-                                        <rect key="frame" x="0.0" y="0.0" width="1440" height="900"/>
-                                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                    </customView>
-                                </subviews>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                             </customView>
                         </subviews>
                     </view>
