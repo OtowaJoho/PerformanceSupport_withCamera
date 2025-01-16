@@ -10,7 +10,6 @@ import Cocoa
 import AVFoundation
 import SwiftUI
 import Vision
-import opencv2
 import AppKit
 
 let sampler = MIDIManager()
@@ -507,73 +506,19 @@ class ViewController: NSViewController, MIDIManagerDelegate {
             midi!.connectMIDIClient(0)
             midi!.delegate = self
         }
-        
-        //    override func viewDidLoad() { //元コード
-        //        super.viewDidLoad()
-        //        CameraManager.shared.startSession(delegate: self)
-        //        canvasView.layer = CALayer()
-        //
-        //        white_key()
-        //        //black_key()
-        //        kyaritan()
-        //    playnote(note:)
-        //        //score()
-        //
-        //    var midi = MIDIManager()
-        //        if 0 < midi!.numberOfSources {
-        //            midi!.connectMIDIClient(0)
-        //            midi!.delegate = self
-        //        }
-        //    }
-        
     }
     
     
     override var representedObject: Any? {
         didSet {}
     }
-    
-    //    func frameBlack(playNum : Int){
-    //
-    //        if playNum < 40 {
-    //            X = Num * 55 + 95
-    //            print(X)
-    //        }else if playNum < 47 {
-    //            X = Num * 55 + 150
-    //        } else if playNum < 52 {
-    //            X = Num * 55 + 205
-    //        } else {
-    //            X = Num * 55 + 260
-    //        }
-    //        Width = 70
-    //        Height = 150
-    //        Y = 460
-    //        print(Num,play_no,X,Y,Width,Height)
-    //    }
-    
-    //    func frameWhite(playNum : Int) {
-    //        if playNum < 41 {
-    //            X = Num * 54 + 108
-    //        } else if playNum < 48 {
-    //            X = Num * 54 + 108 + 54
-    //        } else if playNum < 53 {
-    //            X = Num * 54 + 108 + 108
-    //        } else{
-    //            X = Num * 54 + 108 + 162
-    //        }
-    //        Width = 50
-    //        Height = 560
-    //        Y = 50
-    //    }
-    
-    
+        
     
     func noteOn(ch: UInt8, note: UInt8, vel: UInt8, t: UInt8) {
         
         if note == pianoKeyState.selectedNote {
             if timerViewModel.isTimerActive {
                 timerViewModel.recordTimeForNote(selectedNote: pianoKeyState.selectedNote!) // 正解時の記録
-//                print("正しい鍵盤弾いた\(timerViewModel.recordTimeForNote)")
                 
                 // 次の正解鍵盤をランダムに設定
                 pianoKeyState.selectedNote = UInt8(UInt.random(in: 36...55))
@@ -587,13 +532,10 @@ class ViewController: NSViewController, MIDIManagerDelegate {
         count_all += 1
         score()
     }
-
     
     func noteOff(ch: UInt8, note: UInt8, vel: UInt8, t: UInt8) {
         pianoKeyState.updateKeyColor(forNote: note, isNoteOn: false)
     }
-    
-    
     
     func playnote(note: UInt) {
         pianoKeyState.selectedNote = UInt8(UInt.random(in: 36...55))
@@ -616,176 +558,13 @@ class ViewController: NSViewController, MIDIManagerDelegate {
         textLayer.fontSize = 30.0
         textLayer.contentsScale = NSScreen.main?.backingScaleFactor ?? 1.0 // Retina対応
         
-        // レイヤーを保存しておく
+        // レイヤーを保存
         scoreTextLayer = textLayer
         
         // canvasViewに追加
         canvasView.layer?.addSublayer(textLayer)
     }
-    
-    
-    //    func noteOn(ch: UInt8, note: UInt8, vel: UInt8, t: UInt8) {
-    //        on_num = note
-    //        count_all = count_all + 1
-    //        coloredLayer = createLayer()
-    //
-    //        if on_num == play_no{
-    //            playnote(note: play_no)
-    //            count_collect = count_collect + 1
-    //            print("onNum:\(Num)")
-    //        }
-    //        Num = Int(note - 36)
-    //        //黒鍵
-    //        if note%12 == 1 || note%12 == 3 || note%12 == 6 || note%12 == 8 || note%12 == 10 {
-    //            frameBlack(playNum: Int(note))
-    //            coloredLayer.frame = CGRect(x: Int(X), y: Y, width: Int(Width), height: Int(Height))
-    //            canvasView.layer?.addSublayer(coloredLayer)
-    //
-    //            if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 { //黒鍵を弾かせたいとき
-    //                white_key()
-    //                black_key()
-    //                canvasView.layer?.addSublayer(playLayer)
-    //                canvasView.layer?.addSublayer(coloredLayer)
-    //            } else {
-    //                white_key()
-    //                canvasView.layer?.addSublayer(playLayer)
-    //                black_key()
-    //                canvasView.layer?.addSublayer(coloredLayer)
-    //            }
-    //
-    //        } else{
-    //            //白鍵
-    //            frameWhite(playNum: Int(note))
-    //            coloredLayer.frame = CGRect(x: Int(X), y: Y, width: Int(Width), height: Int(Height))
-    //
-    //            if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 {
-    //                white_key()
-    //                canvasView.layer?.addSublayer(coloredLayer)
-    //                black_key()
-    //                canvasView.layer?.addSublayer(playLayer)
-    //            } else {
-    //                white_key()
-    //                canvasView.layer?.addSublayer(playLayer)
-    //                canvasView.layer?.addSublayer(coloredLayer)
-    //                black_key()
-    //            }
-    //        }
-    //        print("弾いた数：", count_all, "正答数：", count_collect)
-    //        score()
-    //
-    //    }
-    
-    //    func noteOff(ch: UInt8, note: UInt8, vel: UInt8, t: UInt8) {
-    //        score()
-    //        if note == on_num {
-    //            //黒鍵
-    //            if note%12 == 1 || note%12 == 3 || note%12 == 6 || note%12 == 8 || note%12 == 10 {
-    //
-    //                if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 {
-    //                    white_key()
-    //                    //canvasView.layer?.addSublayer(coloredLayer)
-    //                    black_key()
-    //                    canvasView.layer?.addSublayer(playLayer)
-    //                } else {
-    //                    white_key()
-    //                    /// canvasView.layer?.addSublayer(coloredLayer)
-    //                    canvasView.layer?.addSublayer(playLayer)
-    //                    black_key()
-    //                }
-    //            } else{
-    //
-    //                //白鍵
-    //                if play_no%12 == 1 || play_no%12 == 3 || play_no%12 == 6 || play_no%12 == 8 || play_no%12 == 10 {
-    //                    canvasView.layer?.addSublayer(coloredLayer)
-    //                    white_key()
-    //                    black_key()
-    //                    canvasView.layer?.addSublayer(playLayer)
-    //                } else {
-    //                    canvasView.layer?.addSublayer(coloredLayer)
-    //                    white_key()
-    //                    canvasView.layer?.addSublayer(playLayer)
-    //                    black_key()
-    //                }
-    //            }
-    //            score()
-    //        }
-    //    }
-    
 }
-
-//図形の描画
-//extension ViewController{
-//
-//    func createLayer() -> CALayer {
-//        let newLayer = CALayer()
-//        newLayer.borderWidth = 8
-//        newLayer.borderColor = CGColor(red: 0, green: 1, blue: 1, alpha: 0.8)
-//        newLayer.anchorPoint = CGPoint(x: 0, y: 0)
-//        return newLayer
-//    }
-//
-//    func white_key(){
-//        canvasView.layer = CALayer()
-//        //白鍵
-//        let keypath_w = CGMutablePath()
-//        for i in stride(from: 0, to: 1240, by: 108){
-//            keypath_w.addRect( CGRect(x: i+108, y: 50, width: 50, height: 560))
-//        }
-//        //let KeyLayer_w = CAShapeLayer()
-//        KeyLayer_w.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
-//        KeyLayer_w.path = keypath_w
-//        KeyLayer_w.strokeColor = CGColor(red: 255, green: 255, blue: 255, alpha: 0.5)
-//        KeyLayer_w.fillColor = CGColor(red: 255, green: 255, blue: 255, alpha: 0.5)
-//        canvasView.layer?.addSublayer(KeyLayer_w)
-//
-//    }
-//
-//    func black_key() {
-//        // canvasView.layer = CALayer()
-//        let keypath_b = CGMutablePath()
-//        let Y = 460
-//        let W = 70
-//        let H = 150
-//        keypath_b.addRect( CGRect(x: 150, y: Y, width: W, height: H))
-//        keypath_b.addRect( CGRect(x: 260, y: Y, width: W, height: H))
-//        keypath_b.addRect( CGRect(x: 480, y: Y, width: W, height: H))
-//        keypath_b.addRect( CGRect(x: 590, y: Y, width: W, height: H))
-//        keypath_b.addRect( CGRect(x: 700, y: Y, width: W, height: H))
-//        keypath_b.addRect( CGRect(x: 920, y: Y, width: W, height: H))
-//        keypath_b.addRect( CGRect(x: 1030, y: Y, width: W, height: H))
-//        keypath_b.addRect( CGRect(x: 1250, y: Y, width: W, height: H))
-//
-//        //let KeyLayer_b = CAShapeLayer()
-//        KeyLayer_b.frame = CGRect(x: 0, y: 0, width: 0, height: 0)
-//        KeyLayer_b.path = keypath_b
-//        KeyLayer_b.fillColor = CGColor(red: 0, green: 0, blue: 0, alpha: 0.5)
-//        canvasView.layer?.addSublayer(KeyLayer_b)
-//    }
-//
-//    func score() {
-////        // 既にあるレイヤーを削除してから新しいレイヤーを追加する
-////        if let existingLayer = scoreTextLayer {
-////            existingLayer.removeFromSuperlayer() // 既存のレイヤーを削除
-////        }
-////
-////        // 新しいテキストレイヤーを作成
-////        let textLayer = CATextLayer()
-////        textLayer.frame = CGRect(x: 800, y: 700, width: 300, height: 100)
-////        textLayer.string = "弾いた数：\(count_all)\n 正解数：\(count_collect)"
-////        textLayer.foregroundColor = CGColor(red: 1, green: 1, blue: 1, alpha: 1)
-////        textLayer.fontSize = 30.0
-////        textLayer.contentsScale = NSScreen.main?.backingScaleFactor ?? 1.0 // Retina対応
-////
-////        // レイヤーを保存しておく
-////        scoreTextLayer = textLayer
-////
-////        // canvasViewに追加
-////        canvasView.layer?.addSublayer(textLayer)
-////    }
-//
-//}
-
-
 
 class CameraManager:NSObject, AVCaptureVideoDataOutputSampleBufferDelegate{
     private let targetDeviceName = "Brio 500"
@@ -904,97 +683,3 @@ extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
     }
 }
 
-//extension ViewController: AVCaptureVideoDataOutputSampleBufferDelegate {
-//
-//    //元のやつ
-//    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-//        // 画像処理をバックグラウンドスレッドで実行
-//
-//
-//        DispatchQueue.global(qos: .userInitiated).async {
-//
-//            guard let imageBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
-//                print("Error: Unable to get image buffer.")
-//                return
-//            }
-//
-//            CVPixelBufferLockBaseAddress(imageBuffer, CVPixelBufferLockFlags(rawValue: 0))
-//            guard let base = CVPixelBufferGetBaseAddressOfPlane(imageBuffer, 0) else {
-//                print("Error: Unable to get base address.")
-//                CVPixelBufferUnlockBaseAddress(imageBuffer, CVPixelBufferLockFlags(rawValue: 0))
-//                return
-//            }
-//
-//            let bytesPerRow = UInt(CVPixelBufferGetBytesPerRow(imageBuffer))
-//            let width = UInt(CVPixelBufferGetWidth(imageBuffer))
-//            let height = UInt(CVPixelBufferGetHeight(imageBuffer))
-//
-//            let colorSpace = CGColorSpaceCreateDeviceRGB()
-//            let bitsPerComponent = 8
-//            let bitmapInfo = CGBitmapInfo(rawValue: (CGBitmapInfo.byteOrder32Little.rawValue | CGImageAlphaInfo.premultipliedFirst.rawValue) as UInt32)
-//
-//            guard let newContext = CGContext(data: base, width: Int(width), height: Int(height), bitsPerComponent: Int(bitsPerComponent), bytesPerRow: Int(bytesPerRow), space: colorSpace, bitmapInfo: bitmapInfo.rawValue) else {
-//                print("Error: Unable to create CGContext.")
-//                CVPixelBufferUnlockBaseAddress(imageBuffer, CVPixelBufferLockFlags(rawValue: 0))
-//                return
-//            }
-//
-//            CVPixelBufferUnlockBaseAddress(imageBuffer, CVPixelBufferLockFlags(rawValue: 0))
-//
-//            guard let imageRef = newContext.makeImage() else {
-//                print("Error: Unable to make image from CGContext.")
-//                return
-//            }
-//
-//            let image = NSImage(cgImage: imageRef, size: NSSize(width: Int(width), height: Int(height)))
-//
-//            // NSImage -> Mat に変換
-//            let srcMat = Mat(nsImage: image)
-//            let mtx = Mat(rows: 3, cols: 3, type: CvType.CV_64F)
-//            try! mtx.put(row: 0, col: 0, data: [1.92380473e+03, 0, 1.43588428e+03] as [Float64])
-//            try! mtx.put(row: 1, col: 0, data: [0, 1.92926580e+03, 9.02045464e+02] as [Float64])
-//            try! mtx.put(row: 2, col: 0, data: [0, 0, 1] as [Float64])
-//
-//            let distCoeffs = Mat(rows: 1, cols: 5, type: CvType.CV_64F)
-//            try! distCoeffs.put(row: 0, col: 0, data: [0.17418398, -0.58908136, -0.00068051, 0.00181742, 0.636665] as [Float64])
-//
-//            // 歪み補正処理
-//            let undistortedMat = Mat()
-//            Calib3d.undistort(src: srcMat, dst: undistortedMat, cameraMatrix: mtx, distCoeffs: distCoeffs, newCameraMatrix: mtx)
-//
-//            // Mat -> NSImageに変換
-//            let correctedImage = undistortedMat.toNSImage()
-//
-//            // メインスレッドでUIを更新
-//            DispatchQueue.main.async { [weak self] in
-//                guard let self = self, let cameraLayer = self.camera.layer else {
-//                    print("Error: Camera layer not found.")
-//                    return
-//                }
-//
-//                // 古いレイヤーを削除
-//                cameraLayer.sublayers?.forEach { $0.removeFromSuperlayer() }
-//
-//                // 新しいレイヤーを作成
-//                let subLayer = CALayer()
-//                subLayer.frame = cameraLayer.bounds // カメラのレイヤーのサイズに合わせる
-//                subLayer.contents = correctedImage
-//
-//                // ズーム倍率を設定
-//                let zoomScale: CGFloat = 1.2 // 1.0 は元のサイズ、1.1 は 10% ズーム
-//
-//                // ズームを適用
-//                let scaleTransform = CATransform3DMakeScale(zoomScale, zoomScale, 1.0)
-//                subLayer.transform = CATransform3DConcat(CATransform3DMakeRotation(.pi, 0, 0, 1), scaleTransform)
-//
-//                // スケーリングを適用
-//                subLayer.contentsGravity = .resizeAspect // アスペクト比を維持
-//
-//                // 新しいレイヤーを追加
-//                cameraLayer.addSublayer(subLayer)
-//            }
-//        }
-//    }
-//
-//
-//}
